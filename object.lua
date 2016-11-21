@@ -49,6 +49,12 @@ function Object.class( parent ,getter, setter)
 		objMt.__index = class
 	end
 
+	--in order for metamethods to work, we need to copy them directly into the
+	--metatable
+	for _,metamethod in pairs(metamethods) do
+		objMt[metamethod] = class[metamethod]
+	end
+
 
 	-- setup the __call metamethod to create a new object, and use the clase's __init constructor.
 	function classMt.__call(class,...)
