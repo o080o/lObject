@@ -3,6 +3,7 @@ local metamethods = { -- all metamethods except __index
   '__add', '__call', '__concat', '__div', '__le', '__lt', '__mod', '__mul', '__pow', '__sub', '__tostring', '__unm', '__len'
 } 
 --function Object.class( parent, [getter], [setter] ) return Class a new Class object. When called, a Class object returns an instance of that object. 
+--getter/setters follow the function prototype of (self, key, privateTable)
 function Object.class( parent ,getter, setter)
 	local class = {}
 	local objMt = class
@@ -31,8 +32,8 @@ function Object.class( parent ,getter, setter)
 
 	-- a 'setter' functin can be used to store values into a private table, that can only be retreived by a corresponding 'getter' function
 	if setter then
-		objMt.__newindex = function(self, key)
-			setter(self, private, key)
+		objMt.__newindex = function(self, key, value)
+			setter(self, key, value, private)
 		end
 	end
 
@@ -41,7 +42,7 @@ function Object.class( parent ,getter, setter)
 		objMt.__index = function(self, key)
 			local val = class[key] --check Class first for inheritance
 			if not val then
-				val = getter( self, private, key )
+				val = getter( self, key, private)
 			end
 			return val
 		end
